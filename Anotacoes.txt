@@ -10,6 +10,45 @@ DAG:
 Directly acyclic graph
 
 Operator:
-- Action Operator: Python, Bash
-- Transfer Operator:  Move date from A to B
-- Sensor Operator: For example, you can use FileSensor while awating some file.
+- Action Operator: Python, Bash -> Execute an action
+- Transfer Operator:  Move date from A to B -> Transfer data
+- Sensor Operator: For example, you can use FileSensor while awating some file. -> Wait for a condition to be met
+
+Skeleton for build DAG:
+from airflow import DAG
+from datetime import datetime
+
+with DAG('user_processing', start_date=datetime(2023,3,25),
+        schedule_interval='@daily', catchup=False) as dag:
+    None
+
+CATCHUP:
+Setting catchup=False in Airflow means that DAG runs will not be triggered for any past time periods that were missed while the DAG was inactive or paused.
+For example, if you have a DAG scheduled to run every day at 9 AM and the DAG was paused for a week, then without setting catchup=False, when you resume the DAG it will trigger runs for each day that was missed while it was paused. However, setting catchup=False will prevent these missed runs from being triggered.
+To set catchup=False for a specific DAG in Airflow, you can add the following to the DAG definition:
+
+Access VM container:
+docker exec -it {name(docker-compose ps)} or docker exec -it airflow-airflow-scheduler-1 sh
+run airflow -h
+airflow tasks test user_processing create_table 25-03-03: here you can check about status task id
+
+Hook:
+Allows you to easily interact with an external tool or an external service. E.g(postgres, MySQL)
+#Hooks are very useful to abstract away the complexity of interacting with tools.
+#For example, the PostgresOperator uses the PostgresHook to interact with a Postgres Database.
+#It's always good to look at the hooks to check if there isn't any method that could be useful for you.
+#copy_expert to export data from a CSV file into a Postgres table is a great example. This method is not available from the Operator, but we can use it thanks to the Hook.
+
+
+For see data that we get in API:
+docker exec -it airflow-airflow-worker-1 sh
+ls /tmp/
+
+For see data in postgres:
+docker exec -it airflow-postgres-1 sh
+psql -Uairflow
+select * from users;
+or
+\dt for see all tables
+
+A DAG is triggered AFTER the START_DATE/LAST_RUN + THE SCHEDULE_INTERVAL
