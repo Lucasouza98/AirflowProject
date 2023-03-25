@@ -1,0 +1,15 @@
+Airflow:
+
+Core componentes:
+- Web server (IDE)
+- Scheduler
+- Metastore
+- Triggerer
+
+DAG:
+Directly acyclic graph
+
+Operator:
+- Action Operator: Python, Bash
+- Transfer Operator:  Move date from A to B
+- Sensor Operator: For example, you can use FileSensor while awating some file.
